@@ -1,0 +1,4 @@
+{
+  "commands": { "fromJs": "string" },
+  "subscriptions": { "toJs": "string", "toJs2": "string" }
+}

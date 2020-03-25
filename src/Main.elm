@@ -3,6 +3,7 @@ port module Main exposing (main)
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
+import Ports
 
 
 port hello : String -> Cmd msg
@@ -21,13 +22,14 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( 0, hello "World" )
+    ( 0, Cmd.batch [ hello "World", Ports.toJs "yolo", Ports.toJs2 "yolo2" ] )
 
 
 type Msg
     = Increment
     | Decrement
     | ReplyReceived Int
+    | Log String
 
 
 view : Model -> Browser.Document Msg
@@ -57,10 +59,18 @@ update msg model =
             in
             ( model, Cmd.none )
 
+        Log m ->
+            let
+                _ =
+                    Debug.log "Log" m
+            in
+            ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    reply ReplyReceived
+    Ports.subscribe
+        { fromJs = Log }
 
 
 main : Program Flags Model Msg
